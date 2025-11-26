@@ -27,7 +27,10 @@ async function inicializarPagina() {
         
         // Inicializa componentes da interface
         criarBotaoCarrinho();
-        atualizarLinkAvaliacoes(); // ← Adicione esta linha
+        atualizarLinkAvaliacoes();
+        
+        // Carrega e exibe o banner do melhor lanche
+        await exibirBannerMelhorLanche();
         
     } catch (error) {
         console.error("Erro na inicialização:", error);
@@ -117,9 +120,13 @@ async function realizarLogout(event) {
         // Atualiza estado local
         usuarioLogado = null;
         
+        // Limpa o carrinho local
+        carrinho = [];
+        
         // Atualiza interface
         atualizarInterfaceUsuario();
         atualizarPainelAdministrativo();
+        atualizarContadorCarrinho();
         
         alert('Logout realizado com sucesso!');
         
@@ -127,8 +134,10 @@ async function realizarLogout(event) {
         console.error('Erro no logout:', error);
         // Mesmo em caso de erro, limpa o estado local
         usuarioLogado = null;
+        carrinho = [];
         atualizarInterfaceUsuario();
         atualizarPainelAdministrativo();
+        atualizarContadorCarrinho();
         alert('Logout realizado localmente.');
     }
 }
@@ -230,11 +239,26 @@ async function carregarCarrinho() {
     try {
         console.log('Carregando carrinho de:', `${API_BASE_URL}/carrinho`);
         
-        const response = await fetch(`${API_BASE_URL}/carrinho`);
+        // SE USUÁRIO NÃO ESTIVER LOGADO, CARRINHO FICA VAZIO
+        if (!usuarioLogado) {
+            console.log('Usuário não logado, carrinho vazio');
+            carrinho = [];
+            atualizarContadores();
+            return;
+        }
+        
+        // ENVIA O ID DO USUÁRIO NO HEADER
+        const response = await fetch(`${API_BASE_URL}/carrinho`, {
+            headers: {
+                'X-Usuario-ID': usuarioLogado.id.toString()
+            },
+            credentials: 'include'
+        });
         
         if (!response.ok) {
             console.warn('Carrinho não encontrado, inicializando vazio');
             carrinho = [];
+            atualizarContadores();
             return;
         }
         
@@ -252,6 +276,7 @@ async function carregarCarrinho() {
     } catch (error) {
         console.error("Erro ao carregar carrinho:", error);
         carrinho = [];
+        atualizarContadores();
     }
 }
 
@@ -301,12 +326,17 @@ function exibirProdutos(produtosLista) {
 // Altera quantidade de um item no carrinho
 async function alterarQuantidade(produtoId, alteracao) {
     try {
+        // VERIFICA SE USUÁRIO ESTÁ LOGADO
+        if (!usuarioLogado) {
+            alert('Você precisa estar logado para adicionar itens ao carrinho!');
+            window.location.href = './login/login.html?redirect=../menu';
+            return;
+        }
+
         // Calcula nova quantidade
         const itemIndex = carrinho.findIndex(item => item.produtoId == produtoId);
         let novaQuantidade = (itemIndex >= 0 ? carrinho[itemIndex].quantidade : 0) + alteracao;
         novaQuantidade = Math.max(0, novaQuantidade);
-        
-        console.log(`Alterando quantidade do produto ${produtoId} para ${novaQuantidade}`);
         
         // Atualiza localmente primeiro para responsividade
         if (itemIndex >= 0) {
@@ -326,12 +356,14 @@ async function alterarQuantidade(produtoId, alteracao) {
         }
         atualizarContadorCarrinho();
         
-        // Envia para o servidor
+        // Envia para o servidor com o ID do usuário
         const response = await fetch(`${API_BASE_URL}/carrinho`, {
             method: 'POST',
             headers: { 
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Usuario-ID': usuarioLogado.id.toString()
             },
+            credentials: 'include',
             body: JSON.stringify({ 
                 produtoId: parseInt(produtoId), 
                 quantidade: novaQuantidade 
@@ -343,11 +375,11 @@ async function alterarQuantidade(produtoId, alteracao) {
         }
         
         const resultado = await response.json();
-        console.log('Carrinho atualizado no servidor:', resultado);
+        console.log('Carrinho atualizado com sucesso');
         
     } catch (error) {
         console.error("Erro ao atualizar carrinho:", error);
-        alert("Erro ao atualizar carrinho. Recarregando página...");
+        alert("Erro ao atualizar carrinho. Por favor, tente novamente.");
         location.reload();
     }
 }
@@ -383,6 +415,7 @@ function criarBotaoCarrinho() {
         `;
     }
 }
+
 // === FUNÇÕES DO BANNER DO MELHOR LANCHE ===
 
 // Busca o lanche mais bem avaliado
@@ -484,160 +517,6 @@ async function adicionarMelhorLancheAoCarrinho(produtoId) {
     }
 }
 
-// E atualize a função inicializarPagina para incluir o banner:
-async function inicializarPagina() {
-    try {
-        // Mostra estado de carregamento
-        if (produtosContainer) {
-            produtosContainer.innerHTML = '<div class="loading">Carregando cardápio...</div>';
-        }
-        
-        // Verifica se usuário está logado
-        await verificarUsuarioLogado();
-        
-        // Carrega dados
-        await carregarProdutos();
-        await carregarCarrinho();
-        
-        // Inicializa componentes da interface
-        criarBotaoCarrinho();
-        atualizarLinkAvaliacoes();
-        
-        // Carrega e exibe o banner do melhor lanche
-        await exibirBannerMelhorLanche();
-        
-    } catch (error) {
-        console.error("Erro na inicialização:", error);
-        mostrarErroCarregamento();
-    }
-}// === FUNÇÕES DO BANNER DO MELHOR LANCHE ===
-
-// Busca o lanche mais bem avaliado
-async function carregarLancheMaisAvaliado() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/avaliacoes/melhor-lanche`);
-        
-        if (!response.ok) {
-            console.warn('Não foi possível carregar o lanche mais avaliado');
-            return null;
-        }
-        
-        const melhorLanche = await response.json();
-        return melhorLanche;
-        
-    } catch (error) {
-        console.error('Erro ao carregar lanche mais avaliado:', error);
-        return null;
-    }
-}
-
-// Exibe o banner do lanche mais bem avaliado
-async function exibirBannerMelhorLanche() {
-    const banner = document.getElementById('banner-melhor-lanche');
-    if (!banner) return;
-    
-    const melhorLanche = await carregarLancheMaisAvaliado();
-    
-    if (!melhorLanche || !melhorLanche.produto) {
-        banner.style.display = 'none';
-        return;
-    }
-    
-    // Preenche os dados do banner
-    document.getElementById('banner-nome-lanche').textContent = melhorLanche.produto.nome;
-    document.getElementById('banner-descricao').textContent = melhorLanche.produto.ingredientes;
-    document.getElementById('banner-preco-texto').textContent = `R$ ${parseFloat(melhorLanche.produto.preco).toFixed(2)}`;
-    document.getElementById('banner-avaliacao').textContent = `${melhorLanche.media.toFixed(1)} (${melhorLanche.total_avaliacoes} avaliações)`;
-    
-    // Configura a imagem
-    const imagem = document.getElementById('banner-imagem');
-    imagem.src = `img/lanche${melhorLanche.produto.id}.png`;
-    imagem.alt = melhorLanche.produto.nome;
-    imagem.onerror = function() {
-        this.src = 'img/placeholder.png';
-    };
-    
-    // Configura as estrelas
-    atualizarEstrelasBanner(melhorLanche.media);
-    
-    // Configura o botão de comprar
-    const btnComprar = document.getElementById('banner-btn-comprar');
-    btnComprar.onclick = () => adicionarMelhorLancheAoCarrinho(melhorLanche.produto.id);
-    
-    // Mostra o banner
-    banner.style.display = 'block';
-}
-
-// Atualiza as estrelas do banner baseado na avaliação
-function atualizarEstrelasBanner(notaMedia) {
-    const estrelas = document.querySelectorAll('.banner-rating .estrelas .fas');
-    const estrelasCheias = Math.round(notaMedia);
-    
-    estrelas.forEach((estrela, index) => {
-        if (index < estrelasCheias) {
-            estrela.className = 'fas fa-star';
-        } else {
-            estrela.className = 'far fa-star';
-        }
-    });
-}
-
-// Adiciona o melhor lanche ao carrinho
-async function adicionarMelhorLancheAoCarrinho(produtoId) {
-    try {
-        // Encontra o produto na lista
-        const produto = produtos.find(p => p.id == produtoId);
-        if (!produto) {
-            alert('Produto não encontrado!');
-            return;
-        }
-        
-        // Adiciona ao carrinho
-        await alterarQuantidade(produtoId, 1);
-        
-        // Feedback visual
-        const btnComprar = document.getElementById('banner-btn-comprar');
-        btnComprar.innerHTML = '✅ Adicionado!';
-        btnComprar.style.backgroundColor = '#2E7D32';
-        
-        setTimeout(() => {
-            btnComprar.innerHTML = '🛒 Comprar Agora';
-            btnComprar.style.backgroundColor = '';
-        }, 2000);
-        
-    } catch (error) {
-        console.error('Erro ao adicionar ao carrinho:', error);
-        alert('Erro ao adicionar produto ao carrinho');
-    }
-}
-
-// E atualize a função inicializarPagina para incluir o banner:
-async function inicializarPagina() {
-    try {
-        // Mostra estado de carregamento
-        if (produtosContainer) {
-            produtosContainer.innerHTML = '<div class="loading">Carregando cardápio...</div>';
-        }
-        
-        // Verifica se usuário está logado
-        await verificarUsuarioLogado();
-        
-        // Carrega dados
-        await carregarProdutos();
-        await carregarCarrinho();
-        
-        // Inicializa componentes da interface
-        criarBotaoCarrinho();
-        atualizarLinkAvaliacoes();
-        
-        // Carrega e exibe o banner do melhor lanche
-        await exibirBannerMelhorLanche();
-        
-    } catch (error) {
-        console.error("Erro na inicialização:", error);
-        mostrarErroCarregamento();
-    }
-}
 // === FUNÇÕES DE ERRO ===
 
 // Mostra erro de carregamento
@@ -660,8 +539,19 @@ function mostrarErroCarregamento() {
 // Limpa o carrinho
 async function limparCarrinho() {
     try {
+        if (!usuarioLogado) {
+            console.log('Usuário não logado, apenas limpando carrinho local');
+            carrinho = [];
+            atualizarContadores();
+            return;
+        }
+
         const response = await fetch(`${API_BASE_URL}/carrinho`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'X-Usuario-ID': usuarioLogado.id.toString()
+            },
+            credentials: 'include'
         });
         
         if (response.ok) {

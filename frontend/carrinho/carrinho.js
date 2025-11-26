@@ -1,4 +1,4 @@
-// frontend/carrinho.js - Versão corrigida
+// frontend/carrinho.js - Versão COM LOGIN OBRIGATÓRIO
 // Configurações
 const API_URL = 'http://localhost:3001';
 const TAXA_ENTREGA = 5.00;
@@ -6,6 +6,7 @@ const TAXA_ENTREGA = 5.00;
 // Estado do carrinho
 let carrinhoItens = [];
 let produtosDisponiveis = [];
+let usuarioLogado = null;
 
 // Elementos da interface
 let listaCarrinho, totalCarrinho, opcoesEntrega, formularioEntrega, btnConfirmar;
@@ -14,6 +15,14 @@ let listaCarrinho, totalCarrinho, opcoesEntrega, formularioEntrega, btnConfirmar
  * Inicializa a página do carrinho
  */
 async function inicializarCarrinho() {
+  // VERIFICA LOGIN PRIMEIRO - ANTES DE QUALQUER COISA
+  if (!verificarUsuarioLogado()) {
+    alert('Você precisa estar logado para acessar o carrinho!');
+    // Salva a URL atual para redirecionar depois do login
+    window.location.href = '../login/login.html?redirect=../carrinho/carrinho';
+    return;
+  }
+
   // Obtém referências dos elementos
   listaCarrinho = document.getElementById('lista-carrinho');
   totalCarrinho = document.getElementById('total-carrinho');
@@ -46,6 +55,59 @@ async function inicializarCarrinho() {
 }
 
 /**
+ * Verifica se o usuário está logado via localStorage ou cookie
+ * @returns {boolean} True se está logado, false caso contrário
+ */
+function verificarUsuarioLogado() {
+  // Primeiro tenta pelo localStorage
+  const usuarioLocal = localStorage.getItem('usuario');
+  if (usuarioLocal) {
+    try {
+      usuarioLogado = JSON.parse(usuarioLocal);
+      console.log('Usuário logado (localStorage):', usuarioLogado);
+      return true;
+    } catch (e) {
+      console.error('Erro ao parsear usuário do localStorage:', e);
+    }
+  }
+
+  // Se não encontrou no localStorage, tenta pelo cookie
+  const usuarioCookie = getCookie('usuario');
+  if (usuarioCookie) {
+    try {
+      usuarioLogado = JSON.parse(usuarioCookie);
+      // Sincroniza com localStorage
+      localStorage.setItem('usuario', usuarioCookie);
+      console.log('Usuário logado (cookie):', usuarioLogado);
+      return true;
+    } catch (e) {
+      console.error('Erro ao parsear usuário do cookie:', e);
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Função auxiliar para ler cookies
+ */
+function getCookie(nome) {
+  const nomeIgual = nome + "=";
+  const cookies = document.cookie.split(';');
+  
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i];
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1);
+    }
+    if (cookie.indexOf(nomeIgual) === 0) {
+      return cookie.substring(nomeIgual.length, cookie.length);
+    }
+  }
+  return null;
+}
+
+/**
  * Carrega produtos e carrinho do servidor
  */
 async function carregarDados() {
@@ -55,7 +117,14 @@ async function carregarDados() {
     // Carrega em paralelo para melhor performance
     const [produtosResponse, carrinhoResponse] = await Promise.all([
       fetch(`${API_URL}/produto`),
-      fetch(`${API_URL}/carrinho`)
+      // PASSA O ID DO USUÁRIO LOGADO NOS HEADERS
+      fetch(`${API_URL}/carrinho`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Usuario-ID': usuarioLogado.id.toString()
+        },
+        credentials: 'include'
+      })
     ]);
     
     // Verifica se as respostas são válidas
@@ -99,7 +168,6 @@ function renderizarCarrinho() {
     const produto = produtosDisponiveis.find(p => p.id == item.produtoId);
     if (!produto) return;
 
-    // CONVERTE preco para número (correção do erro)
     const preco = parseFloat(produto.preco);
     const subtotal = preco * item.quantidade;
     total += subtotal;
@@ -186,9 +254,14 @@ async function alterarQuantidadeItem(id, alteracao) {
       return;
     }
 
+    // ENVIA COM O ID DO USUÁRIO LOGADO
     const response = await fetch(`${API_URL}/carrinho`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Usuario-ID': usuarioLogado.id.toString()
+      },
+      credentials: 'include',
       body: JSON.stringify({ produtoId: id, quantidade: novaQuantidade })
     });
 
@@ -210,9 +283,14 @@ async function alterarQuantidadeItem(id, alteracao) {
 async function removerItem(id) {
   if (confirm('Remover este item do carrinho?')) {
     try {
+      // ENVIA COM O ID DO USUÁRIO LOGADO
       const response = await fetch(`${API_URL}/carrinho`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Usuario-ID': usuarioLogado.id.toString()
+        },
+        credentials: 'include',
         body: JSON.stringify({ produtoId: id, quantidade: 0 })
       });
 
@@ -308,11 +386,10 @@ async function verificarECriarCliente(usuarioId, dadosCliente) {
       } else if (responseFuncionario.ok) {
         // É funcionário - não pode ser cliente também
         console.log('Usuário é funcionário, não pode ser cliente');
-        // Pode decidir como tratar - talvez apenas usar os dados para esta entrega
       }
     } else if (responseCliente.ok) {
-      // Já é cliente - pode atualizar os dados se quiser
-      console.log('Usuário já é cliente');
+      // Já é cliente - atualiza os dados
+      console.log('Usuário já é cliente, atualizando dados');
       
       const atualizarResponse = await fetch(`${API_URL}/api/clientes`, {
         method: 'PUT',
@@ -339,16 +416,7 @@ async function verificarECriarCliente(usuarioId, dadosCliente) {
  * Confirma o pedido e redireciona para pagamento
  */
 async function confirmarPedido(event) {
-  if (event) event.preventDefault(); // impede o <a> de redirecionar sozinho
-
-  // Verifica se o usuário está logado
-  const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
-  
-  if (!usuarioLogado) {
-    alert('Você precisa estar logado para finalizar o pedido!');
-    window.location.href = '../login/login.html';
-    return;
-  }
+  if (event) event.preventDefault();
 
   const isEntrega = document.querySelector('input[name="tipo-entrega"]:checked')?.value === 'entrega';
   
@@ -408,27 +476,6 @@ async function confirmarPedido(event) {
   window.location.href = '../pagamento/pagamento.html';
 }
 
-
-/**
- * Verifica o status do usuário (cliente, funcionário ou nenhum)
- */
-async function verificarStatusUsuario(usuarioId) {
-  try {
-    const [clienteResponse, funcionarioResponse] = await Promise.all([
-      fetch(`${API_URL}/api/clientes/usuario/${usuarioId}`),
-      fetch(`${API_URL}/api/funcionarios/usuario/${usuarioId}`)
-    ]);
-
-    if (clienteResponse.ok) return 'cliente';
-    if (funcionarioResponse.ok) return 'funcionario';
-    return 'usuario'; // Apenas usuário básico
-    
-  } catch (error) {
-    console.error('Erro ao verificar status do usuário:', error);
-    return 'erro';
-  }
-}
-
 // Funções auxiliares de UI
 function mostrarCarregando() {
   listaCarrinho.innerHTML = '<div class="loading"><p>Carregando seu carrinho...</p></div>';
@@ -440,7 +487,7 @@ function mostrarCarrinhoVazio() {
     <div class="empty-cart">
       <img src="https://cdn-icons-png.flaticon.com/128/1288/1288704.png" alt="Carrinho vazio">
       <p>Seu carrinho está vazio</p>
-      <a href="index.html" class="btn">Voltar ao cardápio</a>
+      <a href="../menu.html" class="btn">Voltar ao cardápio</a>
     </div>
   `;
   totalCarrinho.innerHTML = '';
@@ -463,7 +510,7 @@ function mostrarErroCritico() {
       <h2>ERRO CRÍTICO</h2>
       <p>A página não carregou corretamente</p>
       <button onclick="location.reload()">Recarregar</button>
-      <a href="index.html">Voltar à página inicial</a>
+      <a href="../menu.html">Voltar à página inicial</a>
     </div>
   `;
 }

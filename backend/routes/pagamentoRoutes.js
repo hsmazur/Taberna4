@@ -17,20 +17,12 @@ router.use((req, res, next) => {
   }
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Usuario-ID');
   
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
   
-  next();
-});
-
-// Middleware para extrair dados do usuário (simplificado para não precisar de autenticação completa)
-router.use((req, res, next) => {
-  // Por enquanto, usa usuário temporário
-  // Depois pode ser substituído por middleware de autenticação real
-  req.usuario = { id: 1 }; // ID temporário
   next();
 });
 

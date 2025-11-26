@@ -5,19 +5,14 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 
 // Importar a configuração do banco PostgreSQL
-const db = require('./database.js'); // Ajuste o caminho conforme necessário
+const db = require('./database.js');
 
-// Configurações do servidor - quando em produção, você deve substituir o IP e a porta pelo do seu servidor remoto
-//const HOST = '192.168.1.100'; // Substitua pelo IP do seu servidor remoto
-const HOST = 'localhost'; // Para desenvolvimento local
-const PORT_FIXA = 3001; // Porta fixa
+// Configurações do servidor
+const HOST = 'localhost';
+const PORT_FIXA = 3001;
 
 // Middleware para permitir CORS (Cross-Origin Resource Sharing)
-// Isso é útil se você estiver fazendo requisições de um frontend que está rodando em um domínio diferente
-// ou porta do backend.
-// Em produção, você deve restringir isso para domínios específicos por segurança.
-// Aqui, estamos permitindo qualquer origem, o que é útil para desenvolvimento, mas deve ser ajustado em produção.
-// server.js - Configuração CORS COMPLETA e FUNCIONAL
+// VERSÃO CORRIGIDA - Aceita o header X-Usuario-ID
 app.use((req, res, next) => {
   const allowedOrigins = [
     'http://127.0.0.1:5500',
@@ -38,7 +33,10 @@ app.use((req, res, next) => {
   }
   
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  // CRÍTICO: Adiciona X-Usuario-ID aos headers permitidos
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Usuario-ID');
+  
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Expose-Headers', 'Set-Cookie');
 
@@ -49,15 +47,14 @@ app.use((req, res, next) => {
 
   next();
 });
-// serve a pasta frontend como arquivos estáticos
 
+// serve a pasta frontend como arquivos estáticos
 const caminhoFrontend = path.join(__dirname, '../frontend');
 console.log('Caminho frontend:', caminhoFrontend);
 
 app.use(express.static(caminhoFrontend));
 
 app.use(cookieParser());
-
 
 // Middleware para adicionar a instância do banco de dados às requisições
 app.use((req, res, next) => {
@@ -79,8 +76,6 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-// só mexa nessa parte
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Importando as rotas
 const produtoRoutes = require('./routes/produtoRoutes');
 app.use('/produto', produtoRoutes);
@@ -115,11 +110,8 @@ app.use('/api/pedidos', pedidoRoutes);
 const avaliacaoRoutes = require('./routes/avaliacaoRoutes');
 app.use('/api/avaliacoes', avaliacaoRoutes);
 
-// Nova rota para recuperação de senha
 const recuperarSenhaRoutes = require('./routes/recuperarSenhaRoutes');
 app.use('/api/recuperar-senha', recuperarSenhaRoutes);
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Rota padrão
 app.get('/', (req, res) => {
@@ -129,7 +121,6 @@ app.get('/', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
-
 
 // Rota para testar a conexão com o banco
 app.get('/health', async (req, res) => {
@@ -172,10 +163,6 @@ app.use((err, req, res, next) => {
     timestamp: new Date().toISOString()
   });
 });
-
-
-
-
 
 // Inicialização do servidor
 const startServer = async () => {

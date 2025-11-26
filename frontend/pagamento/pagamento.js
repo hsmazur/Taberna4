@@ -1,14 +1,22 @@
-// frontend/pagamento.js - Versão SEM LOGIN
+// frontend/pagamento.js - Versão COM USUÁRIO REAL
 // Configurações globais
 const API_URL = 'http://localhost:3001';
 
 // Elementos principais
 let valorTotalElement, areaFormularios;
+let usuarioLogado = null;
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', async () => {
     valorTotalElement = document.getElementById('valor-total');
     areaFormularios = document.getElementById('area-formularios');
+    
+    // Verifica se o usuário está logado
+    if (!verificarUsuarioLogado()) {
+        alert('Você precisa estar logado para acessar esta página!');
+        window.location.href = '../login/login.html?redirect=../pagamento/pagamento';
+        return;
+    }
     
     // Carrega o valor total do carrinho
     await carregarTotalCarrinho();
@@ -22,11 +30,67 @@ document.addEventListener('DOMContentLoaded', async () => {
     mostrarFormularioPagamento('dinheiro');
 });
 
+/**
+ * Verifica se o usuário está logado via localStorage ou cookie
+ */
+function verificarUsuarioLogado() {
+    // Tenta pelo localStorage
+    const usuarioLocal = localStorage.getItem('usuario');
+    if (usuarioLocal) {
+        try {
+            usuarioLogado = JSON.parse(usuarioLocal);
+            console.log('Usuário logado:', usuarioLogado);
+            return true;
+        } catch (e) {
+            console.error('Erro ao parsear usuário do localStorage:', e);
+        }
+    }
+
+    // Tenta pelo cookie
+    const usuarioCookie = getCookie('usuario');
+    if (usuarioCookie) {
+        try {
+            usuarioLogado = JSON.parse(usuarioCookie);
+            localStorage.setItem('usuario', usuarioCookie);
+            console.log('Usuário logado (cookie):', usuarioLogado);
+            return true;
+        } catch (e) {
+            console.error('Erro ao parsear usuário do cookie:', e);
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Função auxiliar para ler cookies
+ */
+function getCookie(nome) {
+    const nomeIgual = nome + "=";
+    const cookies = document.cookie.split(';');
+    
+    for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        while (cookie.charAt(0) === ' ') {
+            cookie = cookie.substring(1);
+        }
+        if (cookie.indexOf(nomeIgual) === 0) {
+            return cookie.substring(nomeIgual.length, cookie.length);
+        }
+    }
+    return null;
+}
+
 // Carrega o total do carrinho do banco de dados
 async function carregarTotalCarrinho() {
     try {
-        // Busca o carrinho atual no banco
-        const response = await fetch(`${API_URL}/carrinho`);
+        // Busca o carrinho atual no banco USANDO O ID DO USUÁRIO
+        const response = await fetch(`${API_URL}/carrinho`, {
+            headers: {
+                'X-Usuario-ID': usuarioLogado.id.toString()
+            },
+            credentials: 'include'
+        });
         
         if (!response.ok) {
             throw new Error('Erro ao carregar carrinho');
@@ -131,7 +195,6 @@ function configurarEventosFormulario(tipo) {
             botaoTroco.addEventListener('click', () => {
                 grupoTroco.classList.toggle('visivel');
         
-                // Alterar texto do botão
                 if (grupoTroco.classList.contains('visivel')) {
                     botaoTroco.textContent = 'Não preciso de troco';
                 } else {
@@ -159,7 +222,7 @@ function configurarEventosFormulario(tipo) {
                     mensagemTroco.classList.remove('visivel');
                 }
             });
-        break;
+            break;
             
         case 'pix':
             document.getElementById('gerar-qrcode').addEventListener('click', () => {
@@ -177,7 +240,6 @@ function configurarEventosFormulario(tipo) {
                 }
                 e.target.value = value;
                 
-                // Validação com algoritmo de Luhn
                 const erro = document.getElementById('erro-numero');
                 if (!validarNumeroCartaoLuhn(value)) {
                     erro.textContent = 'Número do cartão inválido';
@@ -195,7 +257,6 @@ function configurarEventosFormulario(tipo) {
                 }
                 e.target.value = value;
                 
-                // Validação básica
                 const erro = document.getElementById('erro-validade');
                 if (value.length !== 5 || !validarDataCartao(value)) {
                     erro.textContent = 'Data inválida (MM/AA)';
@@ -315,7 +376,6 @@ function validarFormulario(tipo) {
                 }
             }
             break;
-
     }
     return true;
 }
@@ -346,7 +406,8 @@ async function finalizarPedido(metodo) {
         const dadosPagamento = {
             metodoPagamento: metodo,
             total: parseFloat(total),
-            dadosEntrega: dadosEntrega.taxaEntrega > 0 ? dadosEntrega : null
+            dadosEntrega: dadosEntrega.taxaEntrega > 0 ? dadosEntrega : null,
+            usuarioId: usuarioLogado.id // ADICIONA O ID DO USUÁRIO
         };
 
         // Adiciona dados específicos do método de pagamento
@@ -363,15 +424,19 @@ async function finalizarPedido(metodo) {
             
         } else if (metodo === 'debito') {
             dadosPagamento.dadosCartao = {
-                numero: document.getElementById('numero-cartao').value.replace(/\s/g, '').slice(-4), // Apenas últimos 4 dígitos
+                numero: document.getElementById('numero-cartao').value.replace(/\s/g, '').slice(-4),
                 nome: document.getElementById('nome-cartao').value.trim()
             };
         }
 
-        // Envia o pedido para o servidor
+        // Envia o pedido para o servidor COM O ID DO USUÁRIO
         const response = await fetch(`${API_URL}/pagamento/finalizar`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Usuario-ID': usuarioLogado.id.toString()
+            },
+            credentials: 'include',
             body: JSON.stringify(dadosPagamento)
         });
 
@@ -386,7 +451,10 @@ async function finalizarPedido(metodo) {
         localStorage.removeItem('totalPedido');
         localStorage.removeItem('dadosEntrega');
         
-        // Redireciona para confirmação
+        // Mostra mensagem de sucesso
+        alert('Pedido realizado com sucesso!');
+        
+        // Redireciona para o menu
         window.location.href = `../menu.html?pedido=${resultado.pedidoId}`;
         
     } catch (error) {

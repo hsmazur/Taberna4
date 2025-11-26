@@ -1,20 +1,27 @@
-// controllers/carrinhoController.js - VERSÃO COMPLETA E CORRIGIDA
+// controllers/carrinhoController.js - VERSÃO COM USUÁRIO REAL
 const db = require('../database');
-
-// ID de usuário temporário para carrinhos não autenticados
-const USUARIO_TEMPORARIO_ID = 1; // Usando ID 1 que provavelmente existe
 
 // Listar itens do carrinho
 const listarCarrinho = async (req, res) => {
   try {
-    // Busca itens do carrinho no banco
+    // Obtém o ID do usuário do header, cookie ou sessão
+    const usuarioId = obterUsuarioId(req);
+    
+    if (!usuarioId) {
+      return res.status(401).json({ 
+        error: 'Usuário não autenticado',
+        message: 'É necessário estar logado para acessar o carrinho'
+      });
+    }
+
+    // Busca itens do carrinho no banco usando o ID real do usuário
     const result = await db.query(`
       SELECT pp.id_produto as "produtoId", pp.quantidade, p.nome_produto as nome, p.preco_produto as preco
       FROM pedido_produto pp
       INNER JOIN produto p ON pp.id_produto = p.id_produto
       INNER JOIN pedido ped ON pp.id_pedido = ped.id_pedido
       WHERE ped.pagamento = 'Pendente' AND ped.id_usuario = $1
-    `, [USUARIO_TEMPORARIO_ID]);
+    `, [usuarioId]);
 
     res.json(result.rows);
   } catch (error) {
@@ -30,6 +37,16 @@ const listarCarrinho = async (req, res) => {
 const atualizarCarrinho = async (req, res) => {
   try {
     const { produtoId, quantidade } = req.body;
+    
+    // Obtém o ID do usuário
+    const usuarioId = obterUsuarioId(req);
+    
+    if (!usuarioId) {
+      return res.status(401).json({ 
+        error: 'Usuário não autenticado',
+        message: 'É necessário estar logado para adicionar itens ao carrinho'
+      });
+    }
     
     if (!produtoId || quantidade < 0) {
       return res.status(400).json({ 
@@ -49,18 +66,18 @@ const atualizarCarrinho = async (req, res) => {
 
     const produto = produtoResult.rows[0];
 
-    // Busca ou cria um pedido pendente com usuário temporário
+    // Busca ou cria um pedido pendente para o usuário logado
     let pedidoResult = await db.query(
       'SELECT id_pedido FROM pedido WHERE id_usuario = $1 AND pagamento = $2',
-      [USUARIO_TEMPORARIO_ID, 'Pendente']
+      [usuarioId, 'Pendente']
     );
 
     let pedidoId;
     if (pedidoResult.rows.length === 0) {
-      // Cria novo pedido pendente com usuário temporário
+      // Cria novo pedido pendente para o usuário logado
       const novoPedido = await db.query(
         'INSERT INTO pedido (id_usuario, pagamento, valor_total) VALUES ($1, $2, $3) RETURNING id_pedido',
-        [USUARIO_TEMPORARIO_ID, 'Pendente', 0]
+        [usuarioId, 'Pendente', 0]
       );
       pedidoId = novoPedido.rows[0].id_pedido;
     } else {
@@ -99,7 +116,7 @@ const atualizarCarrinho = async (req, res) => {
     await atualizarValorTotalPedido(pedidoId);
 
     // Retorna o carrinho atualizado
-    const carrinhoAtualizado = await getCarrinho();
+    const carrinhoAtualizado = await getCarrinho(usuarioId);
     
     res.json({ 
       message: 'Carrinho atualizado com sucesso',
@@ -118,10 +135,20 @@ const atualizarCarrinho = async (req, res) => {
 // Limpar carrinho
 const limparCarrinho = async (req, res) => {
   try {
-    // Encontra o pedido pendente do usuário temporário
+    // Obtém o ID do usuário
+    const usuarioId = obterUsuarioId(req);
+    
+    if (!usuarioId) {
+      return res.status(401).json({ 
+        error: 'Usuário não autenticado',
+        message: 'É necessário estar logado'
+      });
+    }
+
+    // Encontra o pedido pendente do usuário logado
     const pedidoResult = await db.query(
       'SELECT id_pedido FROM pedido WHERE id_usuario = $1 AND pagamento = $2',
-      [USUARIO_TEMPORARIO_ID, 'Pendente']
+      [usuarioId, 'Pendente']
     );
 
     if (pedidoResult.rows.length > 0) {
@@ -172,7 +199,7 @@ async function atualizarValorTotalPedido(pedidoId) {
 }
 
 // Função auxiliar para obter carrinho
-async function getCarrinho() {
+async function getCarrinho(usuarioId) {
   try {
     const result = await db.query(`
       SELECT pp.id_produto as "produtoId", pp.quantidade, p.nome_produto as nome, p.preco_produto as preco
@@ -180,13 +207,45 @@ async function getCarrinho() {
       INNER JOIN produto p ON pp.id_produto = p.id_produto
       INNER JOIN pedido ped ON pp.id_pedido = ped.id_pedido
       WHERE ped.pagamento = 'Pendente' AND ped.id_usuario = $1
-    `, [USUARIO_TEMPORARIO_ID]);
+    `, [usuarioId]);
 
     return result.rows;
   } catch (error) {
     console.error('Erro ao obter carrinho:', error);
     return [];
   }
+}
+
+/**
+ * Função auxiliar para obter o ID do usuário de várias fontes
+ * Prioridade: Header > Cookie > LocalStorage (via header)
+ */
+function obterUsuarioId(req) {
+  // 1. Tenta obter do header customizado (enviado pelo frontend)
+  if (req.headers['x-usuario-id']) {
+    const id = parseInt(req.headers['x-usuario-id']);
+    if (!isNaN(id)) {
+      console.log('ID do usuário obtido do header:', id);
+      return id;
+    }
+  }
+
+  // 2. Tenta obter do cookie
+  if (req.cookies && req.cookies.usuario) {
+    try {
+      const usuario = JSON.parse(req.cookies.usuario);
+      if (usuario && usuario.id) {
+        console.log('ID do usuário obtido do cookie:', usuario.id);
+        return usuario.id;
+      }
+    } catch (e) {
+      console.error('Erro ao parsear cookie:', e);
+    }
+  }
+
+  // 3. Se não encontrou em nenhum lugar
+  console.warn('ID do usuário não encontrado');
+  return null;
 }
 
 module.exports = {

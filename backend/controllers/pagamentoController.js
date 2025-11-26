@@ -1,4 +1,4 @@
-// controllers/pagamentoController.js - Controlador de pagamentos (versão simplificada)
+// controllers/pagamentoController.js - Controlador de pagamentos COM USUÁRIO REAL
 const db = require('../database');
 
 // Finalizar pedido e processar pagamento
@@ -8,11 +8,24 @@ const finalizarPedido = async (req, res) => {
     try {
         await client.query('BEGIN');
         
-        const { metodoPagamento, total, dadosEntrega, valorTroco, dadosCartao } = req.body;
-        const usuarioId = req.usuario?.id || 1; // ID do usuário logado ou temporário
+        const { metodoPagamento, total, dadosEntrega, valorTroco, dadosCartao, usuarioId } = req.body;
+        
+        // Obtém o ID do usuário (prioriza o enviado no body, depois header, depois cookie)
+        let idUsuario = usuarioId || obterUsuarioId(req);
+        
+        if (!idUsuario) {
+            await client.query('ROLLBACK');
+            return res.status(401).json({ 
+                error: 'Usuário não autenticado',
+                message: 'É necessário estar logado para finalizar o pedido'
+            });
+        }
+        
+        console.log('Finalizando pedido para usuário ID:', idUsuario);
         
         // Validações básicas
         if (!metodoPagamento || !total || total <= 0) {
+            await client.query('ROLLBACK');
             return res.status(400).json({ 
                 error: 'Dados de pagamento inválidos' 
             });
@@ -21,7 +34,7 @@ const finalizarPedido = async (req, res) => {
         // Busca o pedido pendente do usuário
         const pedidoResult = await client.query(
             'SELECT id_pedido FROM pedido WHERE id_usuario = $1 AND pagamento = $2',
-            [usuarioId, 'Pendente']
+            [idUsuario, 'Pendente']
         );
         
         if (pedidoResult.rows.length === 0) {
@@ -57,6 +70,8 @@ const finalizarPedido = async (req, res) => {
         
         // Confirma a transação
         await client.query('COMMIT');
+        
+        console.log('Pedido finalizado com sucesso. ID:', pedidoId);
         
         // Busca dados completos do pedido finalizado
         const pedidoCompleto = await buscarDetalhesPedido(pedidoId);
@@ -146,7 +161,15 @@ async function buscarDetalhesPedido(pedidoId) {
 // Listar pedidos do usuário
 const listarPedidosUsuario = async (req, res) => {
     try {
-        const usuarioId = req.usuario?.id || 1;
+        // Obtém o ID do usuário
+        const usuarioId = obterUsuarioId(req);
+        
+        if (!usuarioId) {
+            return res.status(401).json({ 
+                error: 'Usuário não autenticado',
+                message: 'É necessário estar logado'
+            });
+        }
         
         const result = await db.query(`
             SELECT p.id_pedido, p.data_pedido, p.pagamento, p.valor_total,
@@ -168,6 +191,33 @@ const listarPedidosUsuario = async (req, res) => {
         });
     }
 };
+
+/**
+ * Função auxiliar para obter o ID do usuário de várias fontes
+ */
+function obterUsuarioId(req) {
+    // 1. Tenta obter do header customizado
+    if (req.headers['x-usuario-id']) {
+        const id = parseInt(req.headers['x-usuario-id']);
+        if (!isNaN(id)) {
+            return id;
+        }
+    }
+
+    // 2. Tenta obter do cookie
+    if (req.cookies && req.cookies.usuario) {
+        try {
+            const usuario = JSON.parse(req.cookies.usuario);
+            if (usuario && usuario.id) {
+                return usuario.id;
+            }
+        } catch (e) {
+            console.error('Erro ao parsear cookie:', e);
+        }
+    }
+
+    return null;
+}
 
 module.exports = {
     finalizarPedido,
