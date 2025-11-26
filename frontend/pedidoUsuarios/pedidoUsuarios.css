@@ -1,0 +1,212 @@
+/* Container principal */
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: rgba(255, 253, 245, 0.95);
+    border: 2px solid #3a3226;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(58, 50, 38, 0.4);
+}
+
+/* Cabeçalho da sessão */
+.cabecalho-pedidos h2 {
+    font-size: 2rem;
+    color: #3a3226;
+    margin-bottom: 0.5rem;
+}
+
+#info-usuario {
+    font-size: 1.1rem;
+    color: #1a120b;
+    background-color: #fff9e6;
+    padding: 0.5rem 1rem;
+    border-left: 4px solid #d4a76a;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Filtros */
+.filtros {
+    display: flex;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.btn-filtro {
+    padding: 0.6rem 1.3rem;
+    font-family: "MedievalSharp", cursive;
+    font-size: 1rem;
+    background-color: #3a3226;
+    color: #d4a76a;
+    border: 2px solid #d4a76a;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-filtro:hover {
+    background-color: #1a120b;
+    transform: translateY(-2px);
+}
+
+.btn-filtro.ativo {
+    background-color: #8b4513;
+    border-color: #5d2e0d;
+    color: #fff2d0;
+}
+
+/* Lista de pedidos */
+.lista-pedidos {
+    background-color: #fff9e6;
+    padding: 1rem;
+    border: 1px solid #d4a76a;
+    border-radius: 6px;
+    min-height: 300px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+/* Card de cada pedido */
+.pedido-card {
+    background-color: #fff9e6;
+    border: 1px solid #d4a76a;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: 0.2s;
+}
+
+.pedido-card:hover {
+    background-color: #f5ecd7;
+    transform: translateX(5px);
+}
+
+/* Imagens dos lanches dentro dos pedidos */
+.pedido-card img {
+    width: 120px;          /* tamanho ideal */
+    height: auto;          /* sem distorcer */
+    border-radius: 8px;    /* estiloso igual ao tema */
+    border: 1px solid #d4a76a;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    margin-bottom: 0.5rem;
+    object-fit: cover;     /* evita esticar */
+}
+
+/* Status */
+.status {
+    font-weight: bold;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.status.Aprovado {
+    background-color: #2e7d32;
+    color: #f5ecd7;
+    border: 2px solid #1b5e20;
+}
+
+.status.Pendente {
+    background-color: #8b4513;
+    color: #f5ecd7;
+    border: 2px solid #5d2e0d;
+}
+
+.status.Cancelado {
+    background-color: #8b0000;
+    color: #f5ecd7;
+    border: 2px solid #6b0000;
+}
+
+/* Loading */
+.loading {
+    text-align: center;
+    padding: 2rem 0;
+    font-size: 1.2rem;
+    color: #3a3226;
+}
+
+/* Estado vazio */
+.mensagem-vazio {
+    text-align: center;
+    padding: 2rem;
+}
+
+.mensagem-vazio img {
+    width: 120px;
+    margin-bottom: 1rem;
+}
+
+.btn-voltar {
+    display: inline-block;
+    padding: 0.7rem 1.2rem;
+    background-color: #3a3226;
+    border: 2px solid #d4a76a;
+    color: #d4a76a;
+    border-radius: 30px;
+    text-decoration: none;
+    font-family: "MedievalSharp", cursive;
+    transition: 0.3s;
+}
+
+.btn-voltar:hover {
+    background-color: #1a120b;
+    transform: translateY(-2px);
+}
+
+/* Footer — estilo inspirado no pedido.css */
+#final {
+    width: 100%;
+    background-color: rgba(255, 249, 230, 0.95); /* igual ao pedido.css */
+    padding: 2rem 0;
+    margin-top: 3rem;
+    text-align: center;
+    border-top: 2px solid #3a3226;
+    box-shadow: 0 -5px 15px rgba(58, 50, 38, 0.2);
+}
+
+#final h3 {
+    margin-top: 1rem;
+    color: #3a3226;
+    font-family: "MedievalSharp", cursive;
+}
+
+#final .btn-link {
+    display: inline-block;
+    padding: 0.7rem 1.5rem;
+    text-decoration: none;
+    font-family: "MedievalSharp", cursive;
+    background-color: #3a3226;
+    color: #d4a76a;
+    border: 2px solid #d4a76a;
+    border-radius: 30px;
+    transition: 0.3s;
+}
+
+#final .btn-link:hover {
+    background-color: #1a120b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #8b4513;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5d2e0d;
+}

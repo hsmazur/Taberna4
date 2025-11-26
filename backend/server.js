@@ -104,6 +104,9 @@ app.use('/cadastrar', cadastroRoutes);
 const loginRoutes = require('./routes/loginRoutes');
 app.use('/login', loginRoutes);
 
+const pedidoUsuarioRoutes = require('./routes/pedidoUsuarioRoutes');
+app.use('/api/pedidos', pedidoUsuarioRoutes);
+
 const pedidoRoutes = require('./routes/pedidoRoutes');
 app.use('/api/pedidos', pedidoRoutes);
 

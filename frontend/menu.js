@@ -84,23 +84,21 @@ function atualizarInterfaceUsuario() {
     const logoutBtn = document.getElementById('logout');
 
     if (usuarioLogado) {
-        // Usuário está logado
         if (usuarioLogadoDiv) usuarioLogadoDiv.style.display = 'block';
         if (usuarioDeslogadoDiv) usuarioDeslogadoDiv.style.display = 'none';
         if (nomeUsuarioSpan) nomeUsuarioSpan.textContent = `Bem-vindo, ${usuarioLogado.nome}!`;
         
-        // Configura evento de logout
         if (logoutBtn) {
             logoutBtn.addEventListener('click', realizarLogout);
         }
     } else {
-        // Usuário não está logado
         if (usuarioLogadoDiv) usuarioLogadoDiv.style.display = 'none';
         if (usuarioDeslogadoDiv) usuarioDeslogadoDiv.style.display = 'block';
     }
-    
+
     // Atualiza a visibilidade do link de avaliações
     atualizarLinkAvaliacoes();
+    atualizarBotaoMeusPedidos();
 }
 
 // Realiza o logout
@@ -204,6 +202,20 @@ function atualizarLinkAvaliacoes() {
         } else {
             // Usuário não está logado, oculta o link
             linkAvaliacoes.style.display = 'none';
+        }
+    }
+}
+// Função para mostrar/ocultar botão de meus pedidos
+function atualizarBotaoMeusPedidos() {
+    const botaoMeusPedidos = document.getElementById('botao-meus-pedidos-wrapper');
+    
+    if (botaoMeusPedidos) {
+        if (usuarioLogado) {
+            // Usuário está logado, mostra o botão
+            botaoMeusPedidos.style.display = 'block';
+        } else {
+            // Usuário não está logado, oculta o botão
+            botaoMeusPedidos.style.display = 'none';
         }
     }
 }
