@@ -1,0 +1,609 @@
+/* ======================= FONTES & RESET ======================= */
+.medievalsharp-regular {
+    font-family: "MedievalSharp", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ======================= ESTILO GERAL ======================= */
+body {
+    background-image: url("https://wallpapers.com/images/hd/old-paper-texture-parchment-grodfr8ezxzzei6l.jpg");
+    background-attachment: fixed;
+    color: #3a3226;
+    font-family: "MedievalSharp", cursive;
+    line-height: 1.6;
+}
+
+/* ======================= CABEÇALHO ======================= */
+#header {
+    background-color: #1a120b;
+    color: #d4a76a;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid #d4a76a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+#logo {
+    height: 80px;
+    margin-right: 20px;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+#header div h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    text-shadow: 2px 2px 4px #000;
+    color: #d4a76a;
+}
+
+#header div h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #d4a76a;
+}
+
+nav {
+    margin-left: auto;
+}
+
+nav a {
+    color: #d4a76a;
+    margin-left: 1.5rem;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+nav a:hover {
+    color: #1a120b;
+    background-color: #d4a76a;
+    transform: translateY(-2px);
+}
+
+/* ======================= LOGIN / CADASTRO ======================= */
+.botao-login,
+.botao-cadastro {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+}
+
+.botao-login {
+    background-color: #3a3226;
+    color: #d4a76a;
+    border-color: #d4a76a;
+}
+
+.botao-cadastro {
+    background-color: #1a120b;
+    color: #d4a76a;
+    border-color: #d4a76a;
+}
+
+.botao-login:hover,
+.botao-cadastro:hover {
+    background-color: #d4a76a;
+    color: #1a120b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ======================= USUÁRIO ======================= */
+#usuario-logado {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+#nome-usuario {
+    color: #d4a76a;
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+}
+
+#logout {
+    color: #d4a76a;
+    text-decoration: none;
+    transition: all 0.3s;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+#logout:hover {
+    color: #1a120b;
+    background-color: #d4a76a;
+    transform: translateY(-2px);
+}
+
+#usuario-logado,
+#usuario-deslogado {
+    margin-left: auto;
+}
+
+/* ======================= SUBCABEÇALHO ======================= */
+#header2 {
+    background-color: #3a3226;
+    color: #d4a76a;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* ======================= CONTEÚDO PRINCIPAL ======================= */
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: rgba(255, 253, 245, 0.9);
+    border: 2px solid #3a3226;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(58, 50, 38, 0.4);
+}
+
+/* ======================= PAINEL ADMIN ======================= */
+#admin-panel {
+    background-color: #fff9e6;
+    border: 2px solid #d4a76a;
+    border-radius: 10px;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 1200px;
+    text-align: center;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+#admin-panel::before {
+    content: "⚔️ Gerenciamento ⚔️";
+    display: block;
+    font-size: 1.8rem;
+    color: #1a120b;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #d4a76a;
+    padding-bottom: 0.5rem;
+}
+
+.botoes-admin-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.botao-admin {
+    display: inline-block;
+    background-color: #1a120b;
+    color: #d4a76a;
+    padding: 1rem 1.5rem;
+    border-radius: 30px;
+    border: 2px solid #d4a76a;
+    text-decoration: none;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.botao-admin:hover {
+    background-color: #d4a76a;
+    color: #1a120b;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ======================= BANNER MELHOR LANCHE ======================= */
+/* ======================= BANNER MELHOR LANCHE ======================= */
+#banner-melhor-lanche {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.banner-content {
+    background: linear-gradient(135deg, #fff9e6 0%, #f5ecd7 100%);
+    border: 3px solid #8B4513;
+    border-radius: 15px;
+    padding: 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    box-shadow: 0 8px 25px rgba(139, 69, 19, 0.3);
+}
+
+/* imagem à esquerda */
+.banner-image {
+    flex: 0 0 260px;
+}
+.banner-image img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    border: 3px solid #3A3226;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* texto à direita */
+.banner-text {
+    flex: 1;
+}
+
+.banner-text h2 {
+    color: #8B0000;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.banner-text h3 {
+    color: #3A3226;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+}
+
+.banner-text p {
+    color: #5C4D3D;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+}
+
+/* estrelas amarelas maiores */
+.banner-rating {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.estrelas {
+    color: #FFD700;
+    font-size: 1.6rem;
+}
+#banner-avaliacao {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #5C4D3D;
+}
+
+/* preço alinhado à esquerda */
+#banner-preco-texto {
+    font-size: 2.4rem;
+    color: #8B0000;
+    font-weight: bold;
+}
+
+/* layout preço + botão */
+.banner-preco {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* botão continua centralizado */
+.btn-banner-comprar {
+    margin: 0 auto; /* força centralização */
+    background-color: #8B0000;
+    color: #FFD700;
+    border: 2px solid #FFD700;
+    padding: 1rem 2.5rem;
+    font-size: 1.3rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: "MedievalSharp", cursive;
+    transition: all 0.3s;
+}
+.btn-banner-comprar:hover {
+    background-color: #FFD700;
+    color: #8B0000;
+}
+
+
+/* ======================= CARDS PRODUTOS ======================= */
+#legenda {
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 1rem 0 2rem;
+    color: #1a120b;
+    border-bottom: 2px solid #d4a76a;
+    padding-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+
+}
+
+#produtosContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Sempre 3 colunas */
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.card {
+    background-color: #fff9e6;
+    border: 1px solid #d4a76a;
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Alinhamento vertical */
+    align-items: center;
+    text-align: center;
+    height: 100%; /* Garante altura uniforme */
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card img {
+    width: 150px; /* Tamanho um pouco maior */
+    height: 150px;
+    object-fit: cover;
+    border: 2px solid #3a3226;
+    border-radius: 8px;
+    margin-bottom: 1rem; /* Espaço abaixo da imagem */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.card-info {
+    width: 100%;
+}
+
+.card-info h3 {
+    font-size: 1.4rem;
+    color: #1a120b;
+    margin-bottom: 0.5rem;
+}
+
+.card-info p {
+    color: #5c4d3d;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    min-height: 40px; /* Altura fixa para ingredientes */
+}
+
+.card-preco {
+    font-size: 1.6rem; /* Tamanho aumentado */
+    color: #8b0000;
+    font-weight: bold;
+    margin-top: auto; /* Empurra para baixo */
+    padding-top: 1rem;
+}
+
+/* Efeito de hover mais suave */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Sombra mais pronunciada no hover */
+.card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Controles de Quantidade - Centralizado */
+.quantidade {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    gap: 0.8rem;
+    margin-top: 1rem;
+    width: 100%; /* Ocupa toda a largura disponível */
+}
+
+/* Mantenha o restante do estilo dos botões */
+.btn-menos, .btn-mais {
+    background-color: #3a3226;
+    color: #f5ecd7;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-menos:hover, .btn-mais:hover {
+    background-color: #1a120b;
+    transform: scale(1.1);
+}
+
+.contador {
+    min-width: 30px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.card-preco {
+    font-size: 1.4rem;
+    color: #8b0000;
+    font-weight: bold;
+    margin-left: 1rem;
+    white-space: nowrap;
+}
+
+/* ======================= LINKS DE AVALIAÇÃO ======================= */
+#link-avaliacoes,
+a[href*="CRUDavaliacoes"] {
+    display: block;
+    text-align: center;
+    margin: 1.5rem auto;
+    padding: 1rem;
+    background-color: #1a120b;
+    color: #d4a76a;
+    border-radius: 25px;
+    border: 2px solid #d4a76a;
+    max-width: 600px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+#link-avaliacoes:hover,
+a[href*="CRUDavaliacoes"]:hover {
+    background-color: #d4a76a;
+    color: #1a120b;
+    transform: translateY(-2px);
+}
+
+/* ======================= BOTÃO CARRINHO ======================= */
+.botao-carrinho-wrapper {
+    margin: 2rem auto;
+    max-width: 600px;
+    padding: 0 1rem;
+}
+
+.botao-carrinho {
+    display: block;
+    background-color: #1a120b;
+    color: #d4a76a;
+    padding: 1rem;
+    font-size: 1.2rem;
+    text-align: center;
+    border-radius: 30px;
+    text-decoration: none;
+    border: 2px solid #d4a76a;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.botao-carrinho:hover {
+    background-color: #d4a76a;
+    color: #1a120b;
+    transform: translateY(-3px);
+}
+
+/* ======================= RODAPÉ ======================= */
+#final {
+    background-color: #1a120b;
+    color: #d4a76a;
+    padding: 2rem;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+#final a {
+    color: #d4a76a;
+    text-decoration: none;
+}
+
+#final a:hover {
+    text-decoration: underline;
+}
+
+/* ======================= SCROLLBAR ======================= */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: #8b4513; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #5d2e0d; }
+
+/* ======================= RESPONSIVIDADE ======================= */
+
+/* Tablets médios (até 1024px) */
+@media (max-width: 1024px) {
+    #produtosContainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Tablets e celulares grandes (até 900px) */
+@media (max-width: 900px) {
+    .banner-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .banner-rating {
+        justify-content: center;
+    }
+    .banner-preco {
+        justify-content: center;
+    }
+    .banner-image {
+        flex: 0 0 auto;
+        width: 200px;
+        margin: 0 auto;
+    }
+}
+
+/* Celulares (até 768px) */
+@media (max-width: 768px) {
+    #header {
+        flex-direction: column;
+        text-align: center;
+        flex-wrap: wrap;
+    }
+    nav {
+        margin: 1rem 0 0;
+        width: 100%;
+        order: 3;
+    }
+    #produtosContainer {
+        grid-template-columns: 1fr;
+    }
+    .card {
+        max-width: 350px;
+        margin: 0 auto;
+    }
+    #usuario-logado, #usuario-deslogado {
+        margin: 1rem 0 0;
+        width: 100%;
+        justify-content: center;
+    }
+    .botoes-admin-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .botao-admin {
+        width: 100%;
+        max-width: 300px;
+    }
+    .banner-text h2 {
+        font-size: 1.5rem;
+    }
+    .banner-text h3 {
+        font-size: 1.3rem;
+    }
+    .btn-banner-comprar {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+    }
+    .banner-image {
+        width: 150px;
+    }
+    .banner-image img {
+        height: 150px;
+    }
+}
+
+/* Celulares pequenos (até 600px) */
+@media (max-width: 600px) {
+    .botao-admin {
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+    }
+    #admin-panel .botao-admin {
+        width: 80%;
+        margin: 0.5rem auto;
+    }
+    .banner-content {
+        padding: 1.5rem;
+    }
+    .banner-image img {
+        height: 150px;
+    }
+}

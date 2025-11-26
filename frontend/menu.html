@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taberna do Dragão</title>
+    <link rel="stylesheet" href="menu.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header id="header"> 
+        <img id="logo" src="img/logo.png" alt="Taberna do Dragão">
+        <div>
+            <h1>Taberna do Dragão</h1>
+            <h2>Alimentando o reino desde 2025!</h2>
+        </div>
+        <nav>
+            <div id="usuario-logado" style="display: none;">
+                <span id="nome-usuario">Bem-vindo, </span>
+                <a href="#" id="logout">Sair</a>
+                <a href="sobre/sobre.html">Sobre</a>
+            </div>
+            <div id="usuario-deslogado">
+                <a href="./login/login.html">Login</a>
+                <a href="./cadastros/cadastro.html">Criar Conta</a>
+                <a href="sobre/sobre.html">Sobre</a>
+            </div>
+        </nav>
+    </header>
+    <header id="header2">
+        <h3>Rua Zézinho da Silva, 123 - Centro</h3>
+    </header>
+    <br>
+    <div id="admin-panel" style="text-align: center; margin-bottom: 1rem; display: none;"> 
+        <a href="produtos/produto.html" class="botao-admin">Gerenciar Cardápio</a>
+        <a href="pedidos/pedido.html" class="botao-admin">Gerenciar Pedidos</a>
+        <a href="usuarios/usuario.html" class="botao-admin gerente-only" style="display: none;">Gerenciar Usuários</a>
+    </div>
+    <section id="banner-melhor-lanche" style="display: none;">
+        <div class="banner-content">
+            <div class="banner-text">
+                <h2>🌟 Experimente nosso melhor lanche! 🌟</h2>
+                <h3 id="banner-nome-lanche">Nome do Lanche</h3>
+                <p id="banner-descricao">Descrição do lanche mais bem avaliado</p>
+                <div class="banner-rating">
+                    <div class="estrelas">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span id="banner-avaliacao">5.0 (100 avaliações)</span>
+                </div>
+                <div class="banner-preco">
+                    <span id="banner-preco-texto">R$ 25,90</span>
+                    <button id="banner-btn-comprar" class="btn-banner-comprar">
+                        🛒 Comprar Agora
+                    </button>
+                </div>
+            </div>
+            <div class="banner-image">
+                <img id="banner-imagem" src="" alt="Lanche mais bem avaliado">
+            </div>
+        </div>
+    </section>
+    <a href="./CRUDavaliacoes/CRUDavaliacoes.html">Ler mais avaliações</a>     
+    <main>
+        <div id="legenda">Lanches</div>
+        <section id="produtosContainer"></section>
+    </main>
+    <div class="botao-carrinho-wrapper">
+        <a href="./carrinho/carrinho.html" class="botao-carrinho">Ir para o Carrinho 🛒</a>
+    </div>
+    <a href="./avaliacoes/avaliacao.html" id="link-avaliacoes">Já provou um de nossos lanches? O que achou? Deixe sua avaliação!</a>
+    <footer id="final">
+        <h3>Taberna do Dragão &copy; 2025</h3>
+        <h3>Contato: (44) 91234-5678</h3>
+    </footer>
+    <script src="menu.js"></script>
+</body>
+</html>
