@@ -1,0 +1,397 @@
+/* ======================= ESTILOS GERAIS ======================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "MedievalSharp", cursive;
+    background-image: url("https://wallpapers.com/images/hd/old-paper-texture-parchment-grodfr8ezxzzei6l.jpg");
+    background-attachment: fixed;
+    color: #3a3226;
+    line-height: 1.6;
+}
+
+/* ======================= CONTROLES DE FILTRO ======================= */
+.controles {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.filtro-container {
+    background-color: rgba(255, 253, 245, 0.95);
+    padding: 2rem;
+    border: 2px solid #3a3226;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(58, 50, 38, 0.4);
+}
+
+.filtro-container h3 {
+    font-size: 1.5rem;
+    color: #1a120b;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    border-bottom: 2px solid #d4a76a;
+    padding-bottom: 0.5rem;
+}
+
+.filtro-inputs {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-weight: bold;
+    color: #1a120b;
+}
+
+.input-group select {
+    padding: 0.8rem;
+    border: 1px solid #d4a76a;
+    border-radius: 4px;
+    background-color: #fff9e6;
+    font-family: "MedievalSharp", cursive;
+    font-size: 1rem;
+    min-width: 150px;
+}
+
+.btn-filtrar, .btn-limpar, .btn-imprimir {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid #d4a76a;
+    border-radius: 30px;
+    font-family: "MedievalSharp", cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-filtrar {
+    background-color: #1a120b;
+    color: #d4a76a;
+}
+
+.btn-filtrar:hover {
+    background-color: #d4a76a;
+    color: #1a120b;
+    transform: translateY(-2px);
+}
+
+.btn-limpar {
+    background-color: #8b4513;
+    color: #f5ecd7;
+}
+
+.btn-limpar:hover {
+    background-color: #5d2e0d;
+    transform: translateY(-2px);
+}
+
+.btn-imprimir {
+    background-color: #2e7d32;
+    color: #f5ecd7;
+    border-color: #1b5e20;
+}
+
+.btn-imprimir:hover {
+    background-color: #1b5e20;
+    transform: translateY(-2px);
+}
+
+/* ======================= CONTAINER DO RELATÓRIO ======================= */
+.relatorio-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: rgba(255, 253, 245, 0.95);
+    border: 2px solid #3a3226;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(58, 50, 38, 0.4);
+}
+
+/* ======================= CABEÇALHO PARA IMPRESSÃO ======================= */
+.cabecalho-impressao {
+    display: none;
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #3a3226;
+}
+
+.logo-impressao {
+    width: 80px;
+    margin-bottom: 1rem;
+}
+
+.cabecalho-impressao h1 {
+    font-size: 2rem;
+    color: #1a120b;
+    margin-bottom: 0.5rem;
+}
+
+.cabecalho-impressao h2 {
+    font-size: 1.5rem;
+    color: #8b4513;
+    margin-bottom: 1rem;
+}
+
+.cabecalho-impressao p {
+    color: #5c4d3d;
+    font-size: 1rem;
+}
+
+/* ======================= LOADING ======================= */
+.loading {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.5rem;
+    color: #8b4513;
+}
+
+/* ======================= ERRO ======================= */
+.erro-container {
+    text-align: center;
+    padding: 3rem;
+    color: #8b0000;
+}
+
+.erro-container p:first-child {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* ======================= CARDS DE RESUMO ======================= */
+.resumo-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.card-resumo {
+    background-color: #fff9e6;
+    border: 2px solid #d4a76a;
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-resumo:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-icone {
+    font-size: 3rem;
+    min-width: 60px;
+    text-align: center;
+}
+
+.card-info h3 {
+    font-size: 0.9rem;
+    color: #5c4d3d;
+    margin-bottom: 0.5rem;
+}
+
+.card-info .valor {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #1a120b;
+}
+
+/* ======================= SEÇÕES DO RELATÓRIO ======================= */
+.secao-relatorio {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: #fff9e6;
+    border: 1px solid #d4a76a;
+    border-radius: 8px;
+}
+
+.secao-relatorio h2 {
+    font-size: 1.5rem;
+    color: #1a120b;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #d4a76a;
+}
+
+/* ======================= TABELAS ======================= */
+.tabela-container {
+    overflow-x: auto;
+}
+
+.tabela-relatorio {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+.tabela-relatorio thead {
+    background-color: #3a3226;
+    color: #d4a76a;
+}
+
+.tabela-relatorio th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: bold;
+    border: 1px solid #d4a76a;
+}
+
+.tabela-relatorio td {
+    padding: 0.8rem 1rem;
+    border: 1px solid #d4a76a;
+}
+
+.tabela-relatorio tbody tr:nth-child(even) {
+    background-color: #fff9e6;
+}
+
+.tabela-relatorio tbody tr:hover {
+    background-color: #f5ecd7;
+}
+
+.posicao-destaque {
+    font-weight: bold;
+    color: #8b0000;
+    font-size: 1.2rem;
+}
+
+.texto-direita {
+    text-align: right;
+}
+
+/* ======================= RODAPÉ ======================= */
+.btn-voltar {
+    display: inline-block;
+    background-color: #3a3226;
+    color: #d4a76a;
+    padding: 0.8rem 1.5rem;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s;
+    border: 2px solid #d4a76a;
+    font-size: 1.1rem;
+}
+
+.btn-voltar:hover {
+    background-color: #d4a76a;
+    color: #1a120b;
+    transform: translateY(-2px);
+}
+
+/* ======================= ESTILOS DE IMPRESSÃO ======================= */
+@media print {
+    /* Esconde elementos que não devem ser impressos */
+    .no-print {
+        display: none !important;
+    }
+    
+    /* Mostra cabeçalho de impressão */
+    .print-only {
+        display: block !important;
+    }
+    
+    /* Ajustes gerais */
+    body {
+        background: white;
+        color: black;
+        font-size: 12pt;
+    }
+    
+    .relatorio-container {
+        max-width: 100%;
+        margin: 0;
+        padding: 1rem;
+        border: none;
+        box-shadow: none;
+        background: white;
+    }
+    
+    /* Cards em linha na impressão */
+    .resumo-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        page-break-inside: avoid;
+    }
+    
+    .card-resumo {
+        border: 1px solid #ccc;
+        break-inside: avoid;
+    }
+    
+    /* Seções */
+    .secao-relatorio {
+        page-break-inside: avoid;
+        margin: 1rem 0;
+        border: 1px solid #ccc;
+    }
+    
+    /* Força quebra de página */
+    .page-break {
+        page-break-before: always;
+    }
+    
+    /* Tabelas */
+    .tabela-relatorio {
+        font-size: 10pt;
+    }
+    
+    .tabela-relatorio thead {
+        background-color: #f0f0f0 !important;
+        color: black !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .tabela-relatorio tbody tr:nth-child(even) {
+        background-color: #f9f9f9 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    /* Remove sombras e efeitos */
+    * {
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+}
+
+/* ======================= RESPONSIVIDADE ======================= */
+@media (max-width: 768px) {
+    .filtro-inputs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .input-group select,
+    .btn-filtrar,
+    .btn-limpar,
+    .btn-imprimir {
+        width: 100%;
+    }
+    
+    .resumo-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .relatorio-container {
+        padding: 1rem;
+    }
+}

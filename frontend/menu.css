@@ -168,7 +168,7 @@ main {
 }
 
 #admin-panel::before {
-    content: "⚔️ Gerenciamento ⚔️";
+    content: "Gerenciamento";
     display: block;
     font-size: 1.8rem;
     color: #1a120b;

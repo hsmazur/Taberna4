@@ -116,6 +116,9 @@ app.use('/api/avaliacoes', avaliacaoRoutes);
 const recuperarSenhaRoutes = require('./routes/recuperarSenhaRoutes');
 app.use('/api/recuperar-senha', recuperarSenhaRoutes);
 
+const relatorioRoutes = require('./routes/relatorioVendasRoutes');
+app.use('/api/relatorios', relatorioRoutes)
+
 // Rota padrão
 app.get('/', (req, res) => {
   res.json({
